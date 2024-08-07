@@ -1,5 +1,11 @@
+const sarasasDOM = document.querySelector('.svieslente');
 
-const buttonsDOM = document.querySelectorAll('.taskai button');
+sarasasDOM.textContent = "nuuuu";
+
+
+
+
+const buttonsDOM = document.querySelectorAll('button');
 const Neptunas3DOM = buttonsDOM[2];
 const Neptunas2DOM = buttonsDOM[1];
 const Neptunas1DOM = buttonsDOM[0];
@@ -9,121 +15,135 @@ const Rytas3DOM = buttonsDOM[5];
 const resultsDOM = document.querySelectorAll('h3');
 const result1DOM = resultsDOM[0];
 const result2DOM = resultsDOM[1];
-
-const inputDOM = document.querySelector('input');
-const countDOM = document.querySelector('.count');
-
-
-
-let taskaiData = [];
+let historyDOM = document.querySelector('.istorija'); 
+window.deleteHistory=deleteHistory;
 const localData = localStorage.getItem('taskai');
-if (localData !== null) {
-    taskaiData = JSON.parse(localData);
-    addhistory();
-    countPoints();
+let localsData = localStorage.getItem('istorija');
+let scoreHistory=[];
+
+
+
+
+if (localData!== null) {
+    scoreHistory = JSON.parse(localData);
+    localsData =JSON.parse(localData);
+    historyDOM.innerHTML = prepareHTML(scoreHistory);
+    
+
 }
 
-Neptunas1DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'neptunas',
-        taskai: 1,
-        color: 'blue',
-        time: Date.now(),
-    })
-    addhistory();
-    countPoints();
-});
-Neptunas2DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'neptunas',
-        taskai: 2,
-        color: 'blue',
-        time: Date.now(),
-    })
-    addhistory();
-    countPoints();
-});
-Neptunas3DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'neptunas',
-        taskai: 3,
-        color: 'blue',
-        time: Date.now(),
-    })
-    addhistory();
-    countPoints();
-});
-Rytas1DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'rytas',
-        taskai: 1,
-        color: 'green',
-        time: Date.now(),
-    })
-    addhistory();
-    countPoints();
-});
-Rytas2DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'rytas',
-        taskai: 2,
-        color: 'green',
-        time: Date.now(),
-    })
-
-    addhistory();
-    countPoints();
-});
-Rytas3DOM.addEventListener('click', () => {
-    taskaiData.push({
-        team: 'rytas',
-        taskai: 3,
-        color: 'green',
-        time: Date.now(),
-    })
-    addhistory();
-    countPoints();
-});
 
 
-function addhistory() {
-    localStorage.setItem('taskai', JSON.stringify(taskaiData))
-    let HTML = '';
-    console.log(taskaiData);
-    for (const taskai of taskaiData) {
-        HTML += `
-        <div class="taskai istorija">
-        <p >Time: ${formatTime(taskai.time)} </p>
-        <p style="color:${taskai.color}">Team ${taskai.team} scored ${taskai.points} point${taskai.points > 1 ? 's' : ''}</p>
-        <button class="delete">Delete</button>
-        </div>`;
+
+
+let NeptunasTotal = 0;
+let RytasTotal = 0;
+
+
+for (let i =0; i<scoreHistory.length; i++) {
+    if (scoreHistory[i].team === 'Neptunas') {
+        NeptunasTotal += scoreHistory[i].points
     }
-    let historyDOM = document.querySelector('.istorija');
-    historyDOM.innerHTML = HTML;
-    const taskaiDOM = document.querySelectorAll('.taskai');
-    for (let i = 0; i < taskaiDOM.length; i++) {
-        taskaiDOM[i].querySelector('button').addEventListener('click', () => {
-            taskaiData.splice(i, 1);
-            localStorage.setItem('taskai', JSON.stringify(taskaiData))
-        
-            countPoints();
-            addhistory();
-        })
+    else {RytasTotal += scoreHistory[i].points
     }
+
 }
-function countPoints() {
-    let NeptunasTotal = 0;
-    let RytasTotal = 0;
-    for (const taskai of taskaiData) {
-        if (taskai.team === 'neptunas') {
-            NeptunasTotal += taskai.points;
-        } else {
-            RytasTotal += taskai.points;
-        }
+function addHistory(points,team, time) {
+ scoreHistory.push({
+    points: points, 
+    team: team, 
+    time: time,}) ;
+  historyDOM.innerHTML = prepareHTML(scoreHistory);
+  localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+} 
+
+function prepareHTML(array) {
+    
+
+    let result = '';
+    array.forEach((value, i) => {
+        result += value.points + value.team + value.time +`<button onclick="deleteHistory(`+i+`)">Delete</button>`;
+    });
+
+    return result;
+}
+
+function deleteHistory(i) {
+    let tempHistory =scoreHistory[i];
+    if(tempHistory.team=="Neptunas"){
+        NeptunasTotal-=tempHistory.points;
+        result1DOM.textContent = NeptunasTotal;
     }
+    else{  RytasTotal -=tempHistory.points;
+        result2DOM.textContent = RytasTotal;
+
+    }
+scoreHistory.splice(i,1);
+historyDOM.innerHTML = prepareHTML(scoreHistory);
+localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+
+
+
+}
     result1DOM.textContent = NeptunasTotal;
     result2DOM.textContent = RytasTotal;
+    
+    
+
+function neptunasOne() {
+    NeptunasTotal++;
+    result1DOM.textContent = NeptunasTotal;
+    addHistory(1,"Neptunas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
 }
+function neptunasTwo() {
+    NeptunasTotal += 2;
+    result1DOM.textContent = NeptunasTotal;
+    addHistory(2,"Neptunas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+}
+function neptunasThree() {
+    NeptunasTotal += 3;
+    result1DOM.textContent = NeptunasTotal;
+    addHistory(3,"Neptunas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+}
+
+function rytasOne() {
+    RytasTotal++;
+    result2DOM.textContent = RytasTotal;
+    addHistory(1,"Lietuvos rytas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+}
+function rytasTwo() {
+    RytasTotal += 2;
+    result2DOM.textContent = RytasTotal;
+    addHistory(2,"Lietuvos rytas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+}
+function rytasThree() {
+    RytasTotal += 3;
+    result2DOM.textContent = RytasTotal;
+    addHistory(3,"Lietuvos rytas", formatTime(Date.now()));
+    localStorage.setItem('taskai', JSON.stringify(scoreHistory));
+}
+
+Neptunas1DOM.addEventListener('click', neptunasOne);
+Neptunas2DOM.addEventListener('click', neptunasTwo);
+Neptunas3DOM.addEventListener('click', neptunasThree);
+
+Rytas1DOM.addEventListener('click', rytasOne);
+Rytas2DOM.addEventListener('click', rytasTwo);
+Rytas3DOM.addEventListener('click', rytasThree);
+
+
+
+
+
+ 
+
+
+
 
 function formatTime(timeInMs) {
 
