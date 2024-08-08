@@ -1,10 +1,5 @@
 const sarasasDOM = document.querySelector('.svieslente');
 
-sarasasDOM.textContent = "nuuuu";
-
-
-
-
 const buttonsDOM = document.querySelectorAll('button');
 const Neptunas3DOM = buttonsDOM[2];
 const Neptunas2DOM = buttonsDOM[1];
